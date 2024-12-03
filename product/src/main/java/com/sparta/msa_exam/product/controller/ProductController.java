@@ -19,25 +19,26 @@ public class ProductController {
 
     private final ProductService productService;
 
-    // 상품 추가 API
+    // 1. 상품 추가 API
     @PostMapping
     @CacheEvict(value = "products", allEntries = true) // 캐시 초기화
     public ResponseEntity<Product> addProduct(@RequestBody Product product, HttpServletRequest request) {
-        // 상품 추가 후 반환
         Product addedProduct = productService.addProduct(product);
+        System.out.println("[LOG] 상품 추가됨. 캐시 초기화 완료.");
         return ResponseEntity.ok()
                 .header("Server-Port", String.valueOf(request.getLocalPort())) // 서버 포트 헤더 추가
                 .body(addedProduct);
     }
 
-    // 상품 목록 조회 API
+
+    // 2. 상품 목록 조회 API
     @GetMapping
     @Cacheable(value = "products", key = "'allProducts'") // 캐시 저장
     public ResponseEntity<List<Product>> getAllProducts(HttpServletRequest request) {
-        // 서버 포트를 헤더에 포함
+        System.out.println("[LOG] 상품 목록 조회 요청. 캐시 확인.");
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok()
-                .header("Server-Port", String.valueOf(request.getLocalPort())) // 헤더에 Server-Port 추가
+                .header("Server-Port", String.valueOf(request.getLocalPort())) // 서버 포트 헤더 추가
                 .body(products);
     }
 
@@ -45,8 +46,8 @@ public class ProductController {
     @GetMapping("/{productId}")
     @Cacheable(value = "products", key = "#productId") // 캐시 저장
     public ResponseEntity<ProductResponseDto> getProductById(@PathVariable Long productId, HttpServletRequest request) {
-        // 서버 포트를 헤더에 포함
         ProductResponseDto product = productService.getProductById(productId);
+        System.out.println("[LOG] 상품 ID " + productId + " 조회 요청. 캐시 확인.");
         return ResponseEntity.ok()
                 .header("Server-Port", String.valueOf(request.getLocalPort())) // 헤더에 Server-Port 추가
                 .body(product);
