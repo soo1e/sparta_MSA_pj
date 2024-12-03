@@ -1,0 +1,73 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.4' // Spring Boot 버전 수정
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.sparta.msa_exam'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+}
+
+ext {
+	set('springCloudVersion', "2022.0.4") // 안정된 Spring Cloud BOM 버전
+}
+
+dependencies {
+	// Spring Boot 기본 의존성
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Spring Cloud 의존성
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	implementation 'org.springframework.cloud:spring-cloud-starter'
+
+	// 추적 및 모니터링 (Micrometer, Zipkin)
+	implementation 'io.micrometer:micrometer-tracing-bridge-brave' // Micrometer Tracing
+	implementation 'io.zipkin.reporter2:zipkin-reporter-brave' // Zipkin Reporter
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// 테스트 의존성
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
+	// Spring Security 및 OAuth2
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// JWT 라이브러리
+	implementation 'com.auth0:java-jwt:4.4.0' // JWT 토큰 처리 라이브러리
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

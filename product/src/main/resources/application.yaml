@@ -1,0 +1,40 @@
+server:
+  port: ${SERVER_PORT} # 19093 또는 19094에서 실행
+
+spring:
+  application:
+    name: product
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: systempass
+  cloud:
+    discovery:
+      enabled: true
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sampler:
+      probability: 1.0 # 모든 요청 추적 활성화
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/oauth2/token # 인증 서버 URL
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+jwt:
+  secret:
+    key: 7Iqk7YyM66W07YOA7L2U65Sp7YG065+9U3ByaW5n6rCV7J2Y7Yqc7YSw7LWc7JuQ67mI7J6F64uI64ukLg==
+  expiration-time: 3600000
